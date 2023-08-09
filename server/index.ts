@@ -16,12 +16,11 @@ const server = new SocketServer({
   API,
 });
 
-server.events.on("open", (ws: WebSocket) => {
-  const { id, rpc } = ws.getUserData();
+server.events.on("open", ({ id, client }: WebSocket) => {
   console.log(`User ${id} connected`);
 
-  rpc.hello("John");
-  rpc.bye("Doe");
+  client.hello("John");
+  client.bye("Doe");
 });
 
 server.events.on("close", ({ ws, code }) => {

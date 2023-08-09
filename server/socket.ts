@@ -5,8 +5,10 @@ import EventEmitter from "events";
 import { randomUUID } from "crypto";
 
 type PromisifiedClientAPI = Promisify<typeof ClientAPI>;
-type UserData = { rpc: PromisifiedClientAPI; id: string };
-export type WebSocket = uWebSocket<UserData>;
+export type WebSocket = uWebSocket<unknown> & {
+  client: PromisifiedClientAPI;
+  id: string;
+};
 export type Context = { socket: WebSocket; app: TemplatedApp };
 
 type SocketServerOptions = {
@@ -21,10 +23,9 @@ class SocketServer {
   constructor(private options: SocketServerOptions) {
     this.app = App();
 
-    this.app.ws<UserData>("/", {
+    this.app.ws("/", {
       open: (ws) => {
-        const userData = ws.getUserData();
-        userData.id = randomUUID();
+        (ws as WebSocket).id = randomUUID();
         const rpc: PromisifiedClientAPI = new Proxy(
           {} as PromisifiedClientAPI,
           {
@@ -37,7 +38,7 @@ class SocketServer {
           },
         );
 
-        userData.rpc = rpc;
+        (ws as WebSocket).client = rpc;
         this.events.emit("open", ws);
       },
       close: (ws, code, message) => {
