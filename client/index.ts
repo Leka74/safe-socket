@@ -12,13 +12,15 @@ const ws = new Socket("ws://localhost:4000", {
   token: "thisissecrettoken",
 });
 
+const { server } = ws;
+
 ws.events.on("open", () => {
   console.log("Connected to the server");
-  ws.rpc.sum(1, 2).then((total) => {
+  server.sum(1, 2).then((total) => {
     console.log("Sum of 1 + 2 is", total); // outputs: 3
   });
   // @ts-ignore
-  ws.rpc.sum(1, "text").catch(console.error); // outputs: Parameters must be numbers
+  server.sum(1, "text").catch(console.error); // outputs: Parameters must be numbers
 });
 
 ws.events.on("close", () => {

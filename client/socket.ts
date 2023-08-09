@@ -61,7 +61,7 @@ class Socket {
     });
   }
 
-  rpc: PromisifiedServerAPI = new Proxy({} as PromisifiedServerAPI, {
+  server: PromisifiedServerAPI = new Proxy({} as PromisifiedServerAPI, {
     get: (_target, event) => {
       return async (...args: any[]) =>
         new Promise((resolve, reject) => {
