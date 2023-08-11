@@ -24,8 +24,7 @@ server.events.on("open", ({ id, client }: WebSocket) => {
 });
 
 server.events.on("close", ({ ws, code }) => {
-  const { id } = ws.getUserData();
-  console.log(`User ${id} disconnected with code ${code}`);
+  console.log(`User ${ws.id} disconnected with code ${code}`);
 });
 
 server.listen(4000, () => {
